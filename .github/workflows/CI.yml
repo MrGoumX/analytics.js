@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  # manual trigger for every branch
+  workflow_dispatch:
+  # push on master and PR merge on master
+  push:
+    branches: [ master ]
+  # PRs (first and subsequent pushes)
+  pull_request:
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout analytics.js
+        uses: actions/checkout@v2
+        with:
+          path: analytics.js
+      # ===== run tests =====
+      - name: Run tests
+        working-directory: ./analytics.js
+        run: docker-compose run --entrypoint docker/entrypoint-ci.sh builder
+      # ===== cleanup =====
+      - name: Clean analytics.js containers
+        working-directory: ./analytics.js
+        run: docker-compose down -v
+        if: ${{ always() }}
