@@ -32,7 +32,7 @@ jobs:
         env:
           SLACK_USERNAME: Roufianos
           SLACK_COLOR: ${{ job.status }}
-          SLACK_TITLE: Tests successful
+          SLACK_FOOTER: Tests successful
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,actions url
         if: ${{ success() }}
@@ -41,7 +41,7 @@ jobs:
         env:
           SLACK_USERNAME: Roufianos
           SLACK_COLOR: ${{ job.status }}
-          SLACK_TITLE: Tests failed
+          SLACK_FOOTER: Tests failed
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,actions url
         if: ${{ failure() }}
@@ -51,6 +51,6 @@ jobs:
         env:
           SLACK_USERNAME: Roufianos
           SLACK_COLOR: ${{ job.status }}
-          SLACK_TITLE: Tests cancelled
+          SLACK_FOOTER: Tests cancelled
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,actions url
