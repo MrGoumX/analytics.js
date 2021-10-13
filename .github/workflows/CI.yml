@@ -26,3 +26,31 @@ jobs:
         working-directory: ./analytics.js
         run: docker-compose down -v
         if: ${{ always() }}
+      # ===== slack report =====
+      - name: slack success-message
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: Tests successful
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
+        if: ${{ success() }}
+      - name: slack fail-message
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: Tests failed
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
+        if: ${{ failure() }}
+      - name: slack cancel-message
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ cancelled() }}
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_TITLE: Tests cancelled
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
