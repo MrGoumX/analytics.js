@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  # manual trigger for every branch
+  workflow_dispatch:
+  # push on master and PR merge on master
+  push:
+    branches: [ master ]
+  # PRs (first and subsequent pushes)
+  pull_request:
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    steps:
+      # ===== slack start =====
+      - name: Slack start
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_MESSAGE: Tests started
+          SLACK_FOOTER: Analytics.js tests
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
+      - name: Checkout analytics.js
+        uses: actions/checkout@v2
+        with:
+          path: analytics.js
+      # ===== run tests =====
+      - name: Run tests
+        working-directory: ./analytics.js
+        run: docker-compose run --entrypoint docker/entrypoint-ci.sh builder
+      # ===== cleanup =====
+      - name: Clean analytics.js containers
+        working-directory: ./analytics.js
+        run: docker-compose down -v
+        if: ${{ always() }}
+      # ===== slack report =====
+      - name: Slack success
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: Tests successfull
+          SLACK_FOOTER: Analytics.js tests
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
+        if: ${{ success() }}
+      - name: Slack fail
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: Tests failed
+          SLACK_FOOTER: Analytics.js tests
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
+        if: ${{ failure() }}
+      - name: Slack cancel
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ cancelled() }}
+        env:
+          SLACK_USERNAME: Roufianos
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: Tests cancelled
+          SLACK_FOOTER: Analytics.js tests
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          MSG_MINIMAL: ref,actions url
