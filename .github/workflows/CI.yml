@@ -32,7 +32,8 @@ jobs:
         env:
           SLACK_USERNAME: Roufianos
           SLACK_COLOR: ${{ job.status }}
-          SLACK_FOOTER: Tests successful
+          SLACK_MESSAGE: Tests successfull
+          SLACK_FOOTER: Analytics.js tests
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,actions url
         if: ${{ success() }}
@@ -41,7 +42,8 @@ jobs:
         env:
           SLACK_USERNAME: Roufianos
           SLACK_COLOR: ${{ job.status }}
-          SLACK_FOOTER: Tests failed
+          SLACK_MESSAGE: Tests failed
+          SLACK_FOOTER: Analytics.js tests
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,actions url
         if: ${{ failure() }}
@@ -51,6 +53,7 @@ jobs:
         env:
           SLACK_USERNAME: Roufianos
           SLACK_COLOR: ${{ job.status }}
-          SLACK_FOOTER: Tests cancelled
+          SLACK_MESSAGE: Tests cancelled
+          SLACK_FOOTER: Analytics.js tests
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           MSG_MINIMAL: ref,actions url
